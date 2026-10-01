@@ -11,21 +11,25 @@
 | CocoaPods | 1.12+ | 依赖管理 |
 | iOS 模拟器 | 14+ | 开发调试用 |
 
-## 首次初始化平台文件
+## 首次初始化
 
-当前目录只包含 `lib/`（Dart 代码）和 `pubspec.yaml`。需要在工程目录下生成平台目录（`ios/`、`android/` 等）后才能构建：
+`ios/` 平台文件已包含在仓库中（`Runner.xcodeproj`、`Info.plist`、`Podfile` 等），可直接打开。
+
+如果后续需要重新生成或同步 Xcode 工程（例如升级 Flutter 版本后），可执行：
 
 ```bash
 cd muteng_app_ios
 flutter create --platforms=ios .
 ```
 
-这会补齐 `ios/Runner.xcodeproj`、`ios/Runner/Info.plist` 等文件，不会覆盖已有的 `lib/` 目录。
-
 ## 获取依赖
 
 ```bash
 flutter pub get
+
+# iOS 端还需要 CocoaPods 安装依赖
+cd ios
+pod install
 ```
 
 ## 运行到 iOS 模拟器
@@ -70,29 +74,52 @@ muteng_app_ios/
 ├── pubspec.yaml                 # 依赖配置
 ├── analysis_options.yaml        # lint 规则
 ├── .gitignore
-└── lib/
-    ├── main.dart                # 入口（初始化 LocalStorage → RootShell）
-    ├── root_shell.dart          # 底部 TabBar（首页 / 历史 / 我的）
-    ├── app_theme.dart           # 设计常量（AppColors / AppSize）
-    ├── api/
-    │   └── api_client.dart      # HTTP 客户端（https://film.mutengyy.site，15s 超时）
-    ├── storage/
-    │   └── local_storage.dart   # SharedPreferences 封装
-    ├── models/
-    │   ├── movie.dart           # 影片模型（搜索 / 豆瓣双 source 映射）
-    │   ├── history_item.dart    # 观看历史条目
-    │   ├── collect_item.dart    # 收藏条目
-    │   ├── banner_item.dart     # Banner 条目
-    │   └── mp_item.dart         # 小程序条目
-    └── pages/
-        ├── index_page.dart      # 首页（Banner + 分类 Tab + 影片网格）
-        ├── search_page.dart     # 搜索（片类型 Tab + 数据源 Tab + 结果列表）
-        ├── history_page.dart    # 播放历史（时间分组 + 进度条）
-        ├── collect_page.dart    # 收藏（双 key + 取消收藏）
-        ├── mine_page.dart       # 个人中心（快捷功能 + 小程序 + 退出登录）
-        ├── player_page.dart     # 播放器（分集 50/Tab + 历史防抖 + 收藏）
-        ├── login_page.dart      # 登录页（无需登录，直接进入）
-        └── register_page.dart   # 注册页（暂无注册功能）
+├── lib/                         # Dart 源码
+│   ├── main.dart                # 入口（初始化 LocalStorage → RootShell）
+│   ├── root_shell.dart          # 底部 TabBar（首页 / 历史 / 我的）
+│   ├── app_theme.dart           # 设计常量（AppColors / AppSize）
+│   ├── api/
+│   │   └── api_client.dart      # HTTP 客户端（https://film.mutengyy.site，15s 超时）
+│   ├── storage/
+│   │   └── local_storage.dart   # SharedPreferences 封装
+│   ├── models/
+│   │   ├── movie.dart           # 影片模型（搜索 / 豆瓣双 source 映射）
+│   │   ├── history_item.dart    # 观看历史条目
+│   │   ├── collect_item.dart    # 收藏条目
+│   │   ├── banner_item.dart     # Banner 条目
+│   │   └── mp_item.dart         # 小程序条目
+│   └── pages/
+│       ├── index_page.dart      # 首页（Banner + 分类 Tab + 影片网格）
+│       ├── search_page.dart     # 搜索（片类型 Tab + 数据源 Tab + 结果列表）
+│       ├── history_page.dart    # 播放历史（时间分组 + 进度条）
+│       ├── collect_page.dart    # 收藏（双 key + 取消收藏）
+│       ├── mine_page.dart       # 个人中心（快捷功能 + 小程序 + 退出登录）
+│       ├── player_page.dart     # 播放器（分集 50/Tab + 历史防抖 + 收藏）
+│       ├── login_page.dart      # 登录页（无需登录，直接进入）
+│       └── register_page.dart   # 注册页（暂无注册功能）
+└── ios/                         # Xcode 平台文件
+    ├── Podfile
+    ├── Runner.xcodeproj/
+    │   └── project.pbxproj      # Xcode 工程文件
+    ├── Flutter/
+    │   ├── Debug.xcconfig
+    │   └── Release.xcconfig
+    ├── Runner/
+    │   ├── AppDelegate.h / .m / .swift
+    │   ├── main.m
+    │   ├── Info.plist
+    │   ├── Runner.entitlements
+    │   ├── Runner-Bridging-Header.h
+    │   ├── Assets.xcassets/
+    │   │   └── AppIcon.appiconset/Contents.json
+    │   ├── Base.lproj/
+    │   │   ├── LaunchScreen.storyboard
+    │   │   └── Main.storyboard
+    │   ├── GeneratedPluginRegistrant.h / .m
+    │   └── RunnerTests/
+    │       └── RunnerTests.m
+    └── RunnerTests/
+        └── RunnerTests.m
 ```
 
 ## 主要依赖说明
